@@ -4,9 +4,10 @@ from sqlalchemy import Column, Integer, String
 
 Base = declarative_base()
 
+### Class declarations go here
 
 
-
+### End class declarations
 
 def main():
     """In case we need this for something"""
