@@ -1,5 +1,6 @@
 import model
 import csv
+from datetime import datetime
 
 def load_users(session):
 
@@ -16,7 +17,10 @@ def load_movies(session):
     with open('seed_data/u.item', 'rb') as f:
         reader = csv.reader(f, delimiter='|')
         for row in reader:
-            movie = model.Movie(id = row[0], title = row[1].decode("latin-1"), release_date = row[2], imdb_url = row[4])
+            if row[2]:
+                d = datetime.strptime(row[2], "%d-%b-%Y")
+                d = d.date()
+            movie = model.Movie(id = row[0], title = row[1].decode("latin-1"), release_date = d, imdb_url = row[4])
             session.add(movie)
     
     session.commit()

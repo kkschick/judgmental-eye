@@ -1,9 +1,10 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship, backref
+
 
 engine = create_engine("sqlite:///ratings.db", echo=False)
 session = scoped_session(sessionmaker(bind=engine, autocommit=False, autoflush=False))
@@ -27,7 +28,7 @@ class Movie(Base):
 
     id = Column(Integer, primary_key = True)
     title = Column(String(64))
-    release_date = Column(String(15), nullable = True)
+    release_date = Column(DateTime(timezone = False), nullable = True)
     imdb_url = Column(String(64), nullable = True)
 
 class Rating(Base):
