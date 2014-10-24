@@ -1,12 +1,29 @@
 {% extends 'base.html' %}
 {% block body %}
 
+<div class="panel panel-default">
+  <!-- Default panel contents -->
+  <div class="panel-heading">User List</div>
 
-<div>
+  <!-- Table -->
+  <table class="table">
+
+
+<tr><th>User ID</th><th>Age</th><th>Number of ratings</th></tr>    
+
     {% for user in users %}
-    <h2>User {{ user.id }}, age {{ user.age }} has {{ user.ratings|length }} ratings</h2>
+
+
+<tr><td>{{user.id}}</td><td>{{user.age}}</td><td>{{ user.ratings|length }}</td></tr>
+
     {% endfor %}
+
+  </table>
 </div>
+
+
+
+
 
 
 {% endblock %}
