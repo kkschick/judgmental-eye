@@ -46,6 +46,15 @@ class Rating(Base):
 
 ### End class declarations
 
+def get_user_from_email(email):
+    user = User.query.filter_by(email=email).first()
+    return user
+
+def create_user(email, password, gender, zipcode, age):
+    user = User(age = age, gender = gender, zipcode = zipcode, email=email, password= password)
+    session.add(user)
+    session.commit()
+
 def main():
     """In case we need this for something"""
     pass

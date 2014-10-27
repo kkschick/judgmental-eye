@@ -11,8 +11,8 @@
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
-                        {% if session["logged_in"] %}
-                            <li><a href="/login"> {{"Log Out"}} </a></li>
+                        {% if session["loggedIn"] %}
+                            <li><a href="/logout"> {{"Log Out"}} </a></li>
 
                         {% else %}
                             <li><a href="/login">{{"Log In"}}</a></li>
