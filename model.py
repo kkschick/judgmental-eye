@@ -55,6 +55,19 @@ def create_user(email, password, gender, zipcode, age):
     session.add(user)
     session.commit()
 
+def show_user_ratings(id):
+    ratings = Rating.query.filter_by(user_id=id).all()
+    return ratings
+
+def show_movie_details(id):
+    movies = Rating.query.filter_by(movie_id=id).all()
+    return movies
+
+def add_rating(movie_id, user_id, rating):
+    rating = Rating(movie_id=movie_id, user_id=user_id, rating=rating)
+    session.add(rating)
+    session.commit()
+
 def main():
     """In case we need this for something"""
     pass

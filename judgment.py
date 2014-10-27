@@ -1,5 +1,6 @@
-from flask import Flask, render_template, redirect, request, flash, session
+from flask import Flask, render_template, redirect, request, flash, session, url_for
 import model
+from datetime import date
 
 app = Flask(__name__)
 app.secret_key = '23987ETFSDDF345560DFSASF45DFDF567'
@@ -7,21 +8,6 @@ app.secret_key = '23987ETFSDDF345560DFSASF45DFDF567'
 @app.route("/")
 def index():
     return render_template("base.html")
-
-
-
-# @app.route("/user_list")
-# def show_users():
-#     user_list = model.session.query(model.User).limit(50).offset(0).all()
-#     # num_users = model.session.query(model.User).count()
-#     # record = 0
-#     # page = 0
-#     # while record < num_users:
-#     #     user_list = model.session.query(model.User).limit(50).offset(record).all()
-#     #     record += 50
-#     #     page += 1
-#     #     user_list(page)
-#     return render_template("user_list.html", users=user_list)
 
 @app.route("/user_list/", defaults={"page":1})
 @app.route("/user_list/<int:page>")
@@ -31,19 +17,54 @@ def user_list(page):
     forward_one = page + 1
     user_list = model.session.query(model.User).limit(50).offset((page*50) -50).all()
     return render_template("user_list.html", users=user_list, pages=pages, back=back_one, forward=forward_one)
-#     # num_users = model.session.query(model.User).count()
-#     # record = 0
-#     # while record < num_users:
-#     #     user_list = model.session.query(model.User).limit(50).offset(record).all()
-#     #     record += 50
-#     #     page += 1
-#     return render_template("user_list.html", users=user_list)
+
+@app.route("/view_user/<int:id>")
+def show_user_details(id):
+    ratings = model.show_user_ratings(id)
+    ratings_dict = {}
+    for r in ratings:
+        title = r.movie.title
+        release = r.movie.release_date
+        release = release.date()
+        rating = r.rating
+        ratings_dict[r] = [title, release, rating]
+    age = ratings[0].user.age
+    gender = ratings[0].user.gender
+    zipcode = ratings[0].user.zipcode
+
+    return render_template("view_user.html", ratings=ratings_dict, age=age, gender=gender, zipcode=zipcode)
+
+@app.route("/view_movie/<int:id>")
+def view_movie_details(id):
+    movie_ratings = model.show_movie_details(id)
+    title = movie_ratings[0].movie.title
+    release = movie_ratings[0].movie.release_date
+    release = release.date()
+    imdb = movie_ratings[0].movie.imdb_url
+    num_ratings = len(movie_ratings)
+    total = 0
+    for m in movie_ratings:
+        total += m.rating
+    average = float(total) / num_ratings
+    return render_template("view_movie.html", title=title, release=release, imdb=imdb, num_ratings=num_ratings, average=average, id=id)
+
+@app.route("/add_rating", methods=["POST"])
+def add_rating():
+    rating = request.form.get("rating")
+    movie_id = request.form.get("movie")
+    if session['loggedIn']:
+        user_id = session['user'].id
+        model.add_rating(movie_id, user_id, rating)
+        flash ("You've rated this movie")
+        return redirect(url_for('show_user_details', id=user_id))
+    else:
+        flash ("You need to log in to rate this movie.")
+        return redirect(url_for('view_movie_details', id=movie_id))
 
 
 @app.route("/login")
 def show_login():
     return render_template("login.html")
-
 
 @app.route("/login", methods=["POST"])
 def process_login():
