@@ -71,6 +71,19 @@ def add_rating():
         flash ("You need to log in to rate this movie.")
         return redirect(url_for('view_movie_details', id=movie_id))
 
+@app.route("/update_rating", methods=["POST"])
+def update_rating():
+    rating = request.form.get("rating")
+    movie_id = request.form.get("movie")
+    if session['loggedIn']:
+        user_id = session['user'].id
+        model.update_rating(movie_id, user_id, rating)
+        flash ("You've changed your rating for this movie")
+        return redirect(url_for('show_user_details', id=user_id))
+    else:
+        flash ("You need to log in to rate this movie.")
+        return redirect(url_for('view_movie_details', id=movie_id))
+
 
 @app.route("/login")
 def show_login():

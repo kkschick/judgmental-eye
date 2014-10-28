@@ -2,7 +2,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.orm import sessionmaker, scoped_session
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, update
 from sqlalchemy.orm import relationship, backref
 
 
@@ -71,6 +71,12 @@ def add_rating(movie_id, user_id, rating):
 def is_rating(user_id, movie_id):
     rating = Rating.query.filter_by(user_id=user_id, movie_id=movie_id).first()
     return rating
+
+def update_rating(movie_id, user_id, new_rating):
+    old_rating = Rating.query.filter_by(user_id=user_id, movie_id=movie_id).first()
+    old_rating.rating = new_rating
+    # session.add(new_rating)
+    # session.commit()
 
 def main():
     """In case we need this for something"""
