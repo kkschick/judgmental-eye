@@ -50,13 +50,17 @@ def view_movie_details(id):
 
     if session['loggedIn']:
         rating = model.is_rating(session['user'].id, id)
+        user = model.get_user_from_id(session['user'].id)
+        movie = model.get_movie_from_id(id)
+        prediction = None
         if rating:
             rating = rating.rating
         else:
-            rating = None
+            prediction = user.predict_rating(movie)
     else:
         rating = None
-    return render_template("view_movie.html", title=title, release=release, imdb=imdb, num_ratings=num_ratings, average=average, id=id, rating=rating)
+    return render_template("view_movie.html", title=title, release=release, imdb=imdb, 
+           num_ratings=num_ratings, average=average, id=id, rating=rating, prediction=prediction)
 
 @app.route("/add_rating", methods=["POST"])
 def add_rating():
@@ -101,7 +105,7 @@ def process_login():
     else:
         session['user'] = user
         session['loggedIn'] = True
-        return redirect('/')
+        return redirect('/user_list')
 
 @app.route("/signup")
 def show_signup():
