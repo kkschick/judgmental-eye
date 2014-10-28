@@ -83,6 +83,14 @@ def get_user_from_id(id):
     user = User.query.filter_by(id=id).first()
     return user
 
+def get_the_eye():
+    the_eye = User.query.filter_by(email="theeye@ofjudgment.com").first()
+    return the_eye
+
+def get_eye_rating(the_eye, movie_id):
+    eye_rating = Rating.query.filter_by(user_id=the_eye.id, movie_id=movie_id).first()
+    return eye_rating
+
 def get_movie_from_id(id):
     movie = Movie.query.filter_by(id=id).first()
     return movie

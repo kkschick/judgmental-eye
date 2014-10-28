@@ -57,10 +57,30 @@ def view_movie_details(id):
             rating = rating.rating
         else:
             prediction = user.predict_rating(movie)
+            rating = prediction
     else:
         rating = None
+
+    the_eye = model.get_the_eye()
+    eye_rating = model.get_eye_rating(the_eye, id)
+
+    if not eye_rating:
+        eye_rating = the_eye.predict_rating(movie)
+    else:
+        eye_rating = eye_rating.rating
+
+    difference = abs(eye_rating - rating)
+
+    messages = [ "I suppose you don't have such bad taste after all.",
+             "I regret every decision that I've ever made that has brought me to listen to your opinion.",
+             "Words fail me, as your taste in movies has clearly failed you.",
+             "That movie is great. For a clown to watch. Idiot."]
+
+    beratement = messages[int(difference)]
+
     return render_template("view_movie.html", title=title, release=release, imdb=imdb, 
-           num_ratings=num_ratings, average=average, id=id, rating=rating, prediction=prediction)
+           num_ratings=num_ratings, average=average, id=id, rating=rating, prediction=prediction, 
+           beratement=beratement)
 
 @app.route("/add_rating", methods=["POST"])
 def add_rating():
