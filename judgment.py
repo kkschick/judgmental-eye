@@ -7,7 +7,7 @@ app.secret_key = '23987ETFSDDF345560DFSASF45DFDF567'
 
 @app.route("/")
 def index():
-    return render_template("base.html")
+    return render_template("index.html")
 
 @app.route("/user_list/", defaults={"page":1})
 @app.route("/user_list/<int:page>")
@@ -27,7 +27,8 @@ def show_user_details(id):
         release = r.movie.release_date
         release = release.date()
         rating = r.rating
-        ratings_dict[r] = [title, release, rating]
+        movie_id = r.movie_id
+        ratings_dict[r] = [title, release, rating, movie_id]
     age = ratings[0].user.age
     gender = ratings[0].user.gender
     zipcode = ratings[0].user.zipcode
@@ -46,7 +47,16 @@ def view_movie_details(id):
     for m in movie_ratings:
         total += m.rating
     average = float(total) / num_ratings
-    return render_template("view_movie.html", title=title, release=release, imdb=imdb, num_ratings=num_ratings, average=average, id=id)
+
+    if session['loggedIn']:
+        rating = model.is_rating(session['user'].id, id)
+        if rating:
+            rating = rating.rating
+        else:
+            rating = None
+    else:
+        rating = None
+    return render_template("view_movie.html", title=title, release=release, imdb=imdb, num_ratings=num_ratings, average=average, id=id, rating=rating)
 
 @app.route("/add_rating", methods=["POST"])
 def add_rating():

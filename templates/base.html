@@ -12,6 +12,7 @@
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
                         {% if session["loggedIn"] %}
+                            <li><a href="/view_user/{{session['user'].id}}">My Movie Profile</a></li>
                             <li><a href="/logout"> {{"Log Out"}} </a></li>
 
                         {% else %}
@@ -20,6 +21,7 @@
                     </ul>
                 </div>
             </div>
+
         </div>
         <div class="container">
             {% with messages = get_flashed_messages() %}
