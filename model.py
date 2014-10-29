@@ -100,9 +100,9 @@ def create_user(email, password, gender, zipcode, age):
     session.add(user)
     session.commit()
 
-def show_user_ratings(id):
-    ratings = Rating.query.filter_by(user_id=id).all()
-    return ratings
+# def show_user_ratings(id):
+#     ratings = Rating.query.filter_by(user_id=id).all()
+#     return ratings
 
 def show_movie_details(id):
     movies = Rating.query.filter_by(movie_id=id).all()

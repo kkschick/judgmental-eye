@@ -11,8 +11,8 @@
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
-                        {% if session["loggedIn"] %}
-                            <li><a href="/view_user/{{session['user'].id}}">My Movie Profile</a></li>
+                        {% if session["user"] %}
+                            <li><a href="/view_user/{{session['user']}}">My Movie Profile</a></li>
                             <li><a href="/logout"> {{"Log Out"}} </a></li>
 
                         {% else %}
