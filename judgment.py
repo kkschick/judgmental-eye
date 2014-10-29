@@ -44,15 +44,18 @@ def view_movie_details(id):
 
     user_id = session['user']
     if user_id:
-        rating = model.is_rating(user_id, id)
-        user = model.get_user_from_id(user_id)
-        movie = model.get_movie_from_id(id)
+        r = model.session.query(model.Rating).options(joinedload(model.Rating.movie)).filter_by(user_id=user_id, movie_id=id).first()
         prediction = None
-        if rating:
-            rating = rating.rating
+        if r:
+            user = r.user
+            movie = r.movie
+            rating = r.rating
             effective_rating = rating
         else:
+            movie = model.get_movie_from_id(id)
+            user = model.get_user_from_id(user_id)
             prediction = user.predict_rating(movie)
+            rating = None
             effective_rating = prediction
     else:
         rating = None
