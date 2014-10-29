@@ -30,7 +30,6 @@ def show_user_details(id):
 
 @app.route("/view_movie/<int:id>")
 def view_movie_details(id):
-    # movie_ratings = model.session.query(model.Rating).join(model.Movie).filter_by(id=id).all()
     movie_ratings = model.show_movie_details(id)
     title = movie_ratings[0].movie.title
     release = movie_ratings[0].movie.release_date
@@ -65,17 +64,23 @@ def view_movie_details(id):
 
     if not eye_rating:
         eye_rating = the_eye.predict_rating(movie)
+        print eye_rating
     else:
         eye_rating = eye_rating.rating
 
-    difference = abs(eye_rating - effective_rating)
+    if eye_rating != None:
+        difference = abs(eye_rating - effective_rating)
 
-    messages = [ "I suppose you don't have such bad taste after all.",
-             "I regret every decision that I've ever made that has brought me to listen to your opinion.",
-             "Words fail me, as your taste in movies has clearly failed you.",
-             "That movie is great. For a clown to watch. Idiot."]
+        messages = [ "I suppose you don't have such bad taste after all.",
+                 "I regret every decision that I've ever made that has brought me to listen to your opinion.",
+                 "Words fail me, as your taste in movies has clearly failed you.",
+                 "That movie is great. For a clown to watch. Idiot."]
 
-    beratement = messages[int(difference)]
+        beratement = messages[int(difference)]
+    
+    else:
+        beratement = None
+        
     return render_template("view_movie.html", title=title, release=release, imdb=imdb, 
            num_ratings=num_ratings, average=average, id=id, rating=rating, prediction=prediction, 
            beratement=beratement)
@@ -122,7 +127,6 @@ def process_login():
         return redirect('signup')
     else:
         session['user'] = user.id
-        # session['loggedIn'] = True
         return redirect('/user_list')
 
 @app.route("/signup")
