@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block body %}
+
+<div class="panel panel-default">
+  <!-- Default panel contents -->
+  <div class="panel-heading"><h3><strong>Movie Details</strong></h3>
+    <h54><strong>Title:</strong> {{title}}<br>
+        <strong>Release Date:</strong> {{release}}<br>
+        <strong>IMDB URL:</strong> <a href="{{imdb}}">{{imdb}}</a><br>
+        <strong>Number of Ratings:</strong> {{num_ratings}}<br>
+        <strong>Average rating:</strong> {{"%0.2f" % average}}
+    </h4>
+  </div>
+
+
+{% if rating != None %}
+<div class="panel-heading" id="update-div">
+<h4>You rated this movie a {{rating}}!</h4>
+<h5>The Eye says: {{beratement}}</h5>
+
+<form class="form-inline" action="/update_rating" method="POST">
+<div class="control-group inline">
+  <label class="control-label"></label>
+  <div class="controls">
+    <label class="radio">
+      <input type="radio" name="rating" id="1" value="1">1</label>
+    <label class="radio">
+      <input type="radio" name="rating" id="2" value="2">2</label>
+          <label class="radio">
+      <input type="radio" name="rating" id="3" value="3">3</label>
+          <label class="radio">
+      <input type="radio" name="rating" id="4" value="4">4</label>
+          <label class="radio">
+      <input type="radio" name="rating" id="5" value="5">5</label>
+      <input type="hidden" name="movie" value="{{id}}">
+  </div>
+</div>
+<button class="btn btn-primary" id="update-button" type="submit">Update Rating</button>
+</form>
+
+
+</div>
+
+{% else %}
+
+<div class="panel-heading">
+{% if prediction %}
+<h4>We predict you will rate this movie a {{prediction}}!</h4>
+{% endif %}
+<form class="form-inline" action="/add_rating" method="POST">
+    <h4 class="form-signin-heading"><strong>Add a new rating:</strong></h4>
+    <input type="rating" name="rating" class="form-control" placeholder="Rating" required autofocus />
+    <input type="hidden" name="movie" value="{{id}}">
+    <button class="btn btn-primary" type="submit">Save</button>
+</form>
+{% endif %}
+</div>
+
+</div>
+
+
+<script src="/static/js/jquery-1.11.0.min.js"></script>
+<!-- jQuery v1.11.0 -->
+<script src="/static/js/bootstrap.min.js"></script>
+<!-- Bootstrap's JS -->
+
+<script type="text/javascript">
+  var getDiv = document.getElementById("update-div");
+  var getButton = document.getElementById("update-button");
+  getButton.addEventListener('click', function(e)
+    {
+      e.preventDefault();
+      getDiv.innerHTML = "<h4 class="form-signin-heading">Add a new rating:</h4>";
+    }
+    );
+
+</script>
+
+{% endblock %}
