@@ -1,7 +1,6 @@
 from flask import Flask, render_template, redirect, request, flash, session, url_for
 import model
 from sqlalchemy.orm import joinedload
-from datetime import date
 
 app = Flask(__name__)
 app.secret_key = '23987ETFSDDF345560DFSASF45DFDF567'
@@ -23,93 +22,96 @@ def user_list(page):
 @app.route("/view_user/<int:id>")
 def show_user_details(id):
     user = model.session.query(model.User).filter_by(id=id).join(model.Rating).join(model.Movie).first()
-    print user.id
-    print user.age
     ratings = model.session.query(model.Rating).options(joinedload(model.Rating.movie)).filter_by(user_id=id).all()
     return render_template("view_user.html", user=user, ratings=ratings)
 
 @app.route("/view_movie/<int:id>")
 def view_movie_details(id):
     movie_ratings = model.show_movie_details(id)
-    title = movie_ratings[0].movie.title
-    release = movie_ratings[0].movie.release_date
-    release = release.date()
-    imdb = movie_ratings[0].movie.imdb_url
+    movie = movie_ratings[0].movie
     num_ratings = len(movie_ratings)
     total = 0
     for m in movie_ratings:
         total += m.rating
     average = float(total) / num_ratings
 
-    user_id = session['user']
-    if user_id:
-        r = model.session.query(model.Rating).options(joinedload(model.Rating.movie)).filter_by(user_id=user_id, movie_id=id).first()
+    prediction_items = view_prediction(movie)
+    beratement = view_eye(prediction_items, movie)
+
+    return render_template("view_movie.html", movie=movie, 
+           num_ratings=num_ratings, average=average, prediction_items=prediction_items, 
+           beratement=beratement)
+
+def view_prediction(movie):
+
+    if 'user' in session:
+        user_id = session['user']
+        r = model.session.query(model.Rating).options(joinedload(model.Rating.movie)).filter_by(user_id=user_id, movie_id=movie.id).first()
         prediction = None
         if r:
             user = r.user
-            movie = r.movie
             rating = r.rating
             effective_rating = rating
         else:
-            movie = model.get_movie_from_id(id)
             user = model.get_user_from_id(user_id)
             prediction = user.predict_rating(movie)
             rating = None
             effective_rating = prediction
     else:
         rating = None
+        effective_rating = None
+        prediction = None
 
+    prediction_items = [rating, effective_rating, prediction]
+
+    return  prediction_items
+
+def view_eye(prediction_items, movie):
+
+    effective_rating = prediction_items[1]
     the_eye = model.get_the_eye()
-    eye_rating = model.get_eye_rating(the_eye, id)
+    eye_rating = model.get_eye_rating(the_eye, movie.id)
 
     if not eye_rating:
         eye_rating = the_eye.predict_rating(movie)
-        print eye_rating
     else:
         eye_rating = eye_rating.rating
 
-    if eye_rating != None:
+    if eye_rating != None and effective_rating != None:
         difference = abs(eye_rating - effective_rating)
 
         messages = [ "I suppose you don't have such bad taste after all.",
                  "I regret every decision that I've ever made that has brought me to listen to your opinion.",
                  "Words fail me, as your taste in movies has clearly failed you.",
-                 "That movie is great. For a clown to watch. Idiot."]
-
+                 "That movie is great. For a clown to watch. Idiot.",
+                 "You have the worst taste in the world."]
         beratement = messages[int(difference)]
     
     else:
         beratement = None
-        
-    return render_template("view_movie.html", title=title, release=release, imdb=imdb, 
-           num_ratings=num_ratings, average=average, id=id, rating=rating, prediction=prediction, 
-           beratement=beratement)
+    
+    return beratement
+
 
 @app.route("/add_rating", methods=["POST"])
 def add_rating():
     rating = request.form.get("rating")
     movie_id = request.form.get("movie")
-    if session['user']:
-        user_id = session['user']
-        model.add_rating(movie_id, user_id, rating)
-        flash ("You've rated this movie")
-        return redirect(url_for('show_user_details', id=user_id))
-    else:
-        flash ("You need to log in to rate this movie.")
-        return redirect(url_for('view_movie_details', id=movie_id))
+    user_id = session['user']
+    model.add_rating(movie_id, user_id, rating)
+    flash ("You've rated this movie")
+    return redirect(url_for('show_user_details', id=user_id))
+
 
 @app.route("/update_rating", methods=["POST"])
 def update_rating():
     rating = request.form.get("rating")
     movie_id = request.form.get("movie")
-    if session['user']:
-        user_id = session['user']
-        model.update_rating(movie_id, user_id, rating)
-        flash ("You've changed your rating for this movie")
-        return redirect(url_for('show_user_details', id=user_id))
-    else:
-        flash ("You need to log in to rate this movie.")
-        return redirect(url_for('view_movie_details', id=movie_id))
+    user_id = session['user']
+    model.update_rating(movie_id, user_id, rating)
+    flash ("You've changed your rating for this movie")
+    return redirect(url_for('show_user_details', id=user_id))
+
 
 
 @app.route("/login")
@@ -123,7 +125,7 @@ def process_login():
     user = model.get_user_from_email(email)
 
     if user == None:
-        flash ("This customer is not registered yet")
+        flash ("This user is not registered yet")
         return redirect('signup')
     else:
         session['user'] = user.id

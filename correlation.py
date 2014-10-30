@@ -12,7 +12,7 @@ def pearson(pairs):
     squares1 = sum([ n*n for n in series_1 ])
     squares2 = sum([ n*n for n in series_2 ])
 
-    product_sum = sum([ n * m for n,m in pairs ])
+    product_sum = sum([ float(n) * float(m) for n,m in pairs ])
 
     size = len(pairs)
 
