@@ -3,9 +3,9 @@ Judgmental Eye: A Movie Rating App
 
 ####The Project
 
-The Judgmental Eye is a movie ratings application where users can log in and rate movies they have seen. The app uses machine learning to predict how a user will rate a movie they have not yet seen. 
+The Judgmental Eye is a movie ratings application where users can log in and rate movies they have seen. 
 
-![Landing page](/static/screenshots/landingpage.png)
+It uses machine learning to predict how a user will rate a movie they have not yet seen. 
 
 ####Table of Contents
 - [Technologies Used](#technologies-used)
@@ -18,6 +18,8 @@ The Judgmental Eye is a movie ratings application where users can log in and rat
 The Judgmental Eye was written using Python, Flask, HTML, CSS, Twitter Bootstrap, SQLAlchemy, and Postgres.
 
 It also uses machine learning (a Pearson correlation) and the MovieLens dataset, which contains 100,000 ratings of 1,700 movies from 1,000 users.
+
+![Landing page](/static/screenshots/landingpage.png)
 
 ####How It Works
 
