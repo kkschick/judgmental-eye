@@ -29,8 +29,6 @@ If a user has not yet rated a movie, the Judgmental Eye algorithm uses machine l
 
 ####Product Screenshots
 
-![Landing page](/static/screenshots/landingpage.png)
-
 View your movie profile to see movies you have rated
 
 ![Movie profile](/static/screenshots/movieprofile.png)
