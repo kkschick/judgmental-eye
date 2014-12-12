@@ -5,9 +5,9 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship, backref
 import correlation
+import config
 
-
-engine = create_engine("sqlite:///ratings.db", echo=False)
+engine = create_engine(config.DB_URI, echo=False)
 session = scoped_session(sessionmaker(bind=engine, autocommit=False, autoflush=False))
 
 Base = declarative_base()
@@ -56,9 +56,9 @@ class Movie(Base):
     __tablename__ = "movies"
 
     id = Column(Integer, primary_key = True)
-    title = Column(String(64))
+    title = Column(String(128))
     release_date = Column(DateTime(timezone = False), nullable = True)
-    imdb_url = Column(String(64), nullable = True)
+    imdb_url = Column(String(264), nullable = True)
 
 class Rating(Base):
 ### Association object
@@ -84,7 +84,10 @@ def get_user_from_id(id):
     return user
 
 def get_the_eye():
-    the_eye = User.query.filter_by(email="theeye@ofjudgment.com").first()
+    user = User(id=944, email='theeye@ofjudgment.com', password='securepass')
+    session.add(user)
+    session.commit()
+    the_eye = User.query.filter_by(id=944).first()
     return the_eye
 
 def get_eye_rating(the_eye, movie_id):
@@ -96,7 +99,7 @@ def get_movie_from_id(id):
     return movie
 
 def create_user(email, password, gender, zipcode, age):
-    user = User(age = age, gender = gender, zipcode = zipcode, email=email, password= password)
+    user = User(age=age, gender=gender, zipcode=zipcode, email=email, password=password)
     session.add(user)
     session.commit()
 
@@ -117,9 +120,11 @@ def update_rating(movie_id, user_id, new_rating):
     old_rating = Rating.query.filter_by(user_id=user_id, movie_id=movie_id).first()
     old_rating.rating = new_rating
 
+def create_tables():
+    Base.metadata.create_all(engine)
+
 def main():
-    """In case we need this for something"""
-    pass
+    create_tables()
 
 if __name__ == "__main__":
     main()

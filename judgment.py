@@ -38,8 +38,8 @@ def view_movie_details(id):
     prediction_items = view_prediction(movie)
     beratement = view_eye(prediction_items, movie)
 
-    return render_template("view_movie.html", movie=movie, 
-           num_ratings=num_ratings, average=average, prediction_items=prediction_items, 
+    return render_template("view_movie.html", movie=movie,
+           num_ratings=num_ratings, average=average, prediction_items=prediction_items,
            beratement=beratement)
 
 def view_prediction(movie):
@@ -64,7 +64,7 @@ def view_prediction(movie):
 
     prediction_items = [rating, effective_rating, prediction]
 
-    return  prediction_items
+    return prediction_items
 
 def view_eye(prediction_items, movie):
 
@@ -86,10 +86,10 @@ def view_eye(prediction_items, movie):
                  "That movie is great. For a clown to watch. Idiot.",
                  "You have the worst taste in the world."]
         beratement = messages[int(difference)]
-    
+
     else:
         beratement = None
-    
+
     return beratement
 
 
@@ -102,7 +102,6 @@ def add_rating():
     flash ("You've rated this movie")
     return redirect(url_for('show_user_details', id=user_id))
 
-
 @app.route("/update_rating", methods=["POST"])
 def update_rating():
     rating = request.form.get("rating")
@@ -111,8 +110,6 @@ def update_rating():
     model.update_rating(movie_id, user_id, rating)
     flash ("You've changed your rating for this movie")
     return redirect(url_for('show_user_details', id=user_id))
-
-
 
 @app.route("/login")
 def show_login():
@@ -141,7 +138,7 @@ def make_new_account():
     password = request.form.get("password")
     age = request.form.get("age")
     gender = request.form.get("gender")
-    zipcode = request.form.get("zipcode")    
+    zipcode = request.form.get("zipcode")
     model.create_user(email, password, gender, zipcode, age)
     flash ("You're registered! Now please log in")
     return redirect('/login')
