@@ -5,6 +5,8 @@ Judgmental Eye: A Movie Rating App
 
 The Judgmental Eye is a movie ratings application where users can log in and rate movies they have seen. The app uses machine learning to predict how a user will rate a movie they have not yet seen. 
 
+![Landing page](/static/screenshots/landingpage.png)
+
 ####Table of Contents
 - [Technologies Used](#technologies-used)
 - [How It Works](#how-it-works)
@@ -25,7 +27,7 @@ If a user has not yet rated a movie, the Judgmental Eye algorithm uses machine l
 
 ####Product Screenshots
 
-![Landing page[(/static/screenshots/landingpage.png)
+![Landing page](/static/screenshots/landingpage.png)
 
 View your movie profile to see movies you have rated
 
